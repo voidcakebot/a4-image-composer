@@ -107,9 +107,22 @@ export default function HomePage() {
   const rotateActive90 = useCallback(() => {
     if (!activeId) return;
     setItems((prev) =>
-      prev.map((item) =>
-        item.id === activeId ? { ...item, rotation: (item.rotation + 90) % 360 } : item,
-      ),
+      prev.map((item) => {
+        if (item.id !== activeId) return item;
+        const delta = Math.PI / 2;
+        const cx = item.x + item.width / 2;
+        const cy = item.y + item.height / 2;
+        const vx = -item.width / 2;
+        const vy = -item.height / 2;
+        const rvx = vx * Math.cos(delta) - vy * Math.sin(delta);
+        const rvy = vx * Math.sin(delta) + vy * Math.cos(delta);
+        return {
+          ...item,
+          x: cx + rvx,
+          y: cy + rvy,
+          rotation: (item.rotation + 90) % 360,
+        };
+      }),
     );
   }, [activeId]);
 
