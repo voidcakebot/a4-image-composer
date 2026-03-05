@@ -104,6 +104,40 @@ export default function HomePage() {
     setActiveId(null);
   }, [activeId]);
 
+  const setActiveWidthInInches = useCallback(
+    (inches: number) => {
+      if (!activeId) return;
+      const targetWidth = mmToPx(inches * 25.4);
+      setItems((prev) =>
+        prev.map((item) => {
+          if (item.id !== activeId) return item;
+
+          const ratio = targetWidth / item.width;
+          const nextWidth = targetWidth;
+          const nextHeight = keepAspect ? Math.max(8, item.height * ratio) : item.height;
+
+          const centerX = item.x + item.width / 2;
+          const centerY = item.y + item.height / 2;
+
+          const unclampedX = centerX - nextWidth / 2;
+          const unclampedY = centerY - nextHeight / 2;
+
+          const nextX = Math.min(Math.max(0, unclampedX), Math.max(0, EDITOR_SIZE.width - nextWidth));
+          const nextY = Math.min(Math.max(0, unclampedY), Math.max(0, EDITOR_SIZE.height - nextHeight));
+
+          return {
+            ...item,
+            width: nextWidth,
+            height: nextHeight,
+            x: nextX,
+            y: nextY,
+          };
+        }),
+      );
+    },
+    [activeId, keepAspect],
+  );
+
   const rotateActive90 = useCallback(() => {
     if (!activeId) return;
     setItems((prev) =>
@@ -300,6 +334,8 @@ export default function HomePage() {
           ⇱ Ratio
         </button>
         <button className="btn" disabled={!activeId} onClick={rotateActive90}>↻ 90°</button>
+        <button className="btn" disabled={!activeId} onClick={() => setActiveWidthInInches(1)}>1 in</button>
+        <button className="btn" disabled={!activeId} onClick={() => setActiveWidthInInches(2)}>2 in</button>
         <button className="btn" onClick={exportPNG}>⬇ PNG</button>
         <button className="btn" onClick={exportPDF}>⬇ PDF</button>
         <button className="btn btn-danger" disabled={!activeId} onClick={removeActive}>✕ Delete</button>
