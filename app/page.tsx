@@ -53,7 +53,7 @@ export default function HomePage() {
 
   const fitScale = useMemo(() => {
     const maxW = viewport.width - 24;
-    const maxH = viewport.height - 200;
+    const maxH = viewport.height - 280;
     return Math.min(maxW / EDITOR_SIZE.width, maxH / EDITOR_SIZE.height);
   }, [viewport]);
 
@@ -322,23 +322,32 @@ export default function HomePage() {
         style={{ display: "none" }}
       />
 
-      <nav className="toolbar modern">
-        <button className="btn btn-primary" onClick={() => inputRef.current?.click()} title="Add image">🖼️</button>
-        <button className={`btn ${grid.enabled ? "active" : ""}`} onClick={() => setGrid((g) => ({ ...g, enabled: !g.enabled }))} title="Grid">
-          #️⃣
-        </button>
-        <button className={`btn ${grid.snap ? "active" : ""}`} onClick={() => setGrid((g) => ({ ...g, snap: !g.snap }))} title="Snap">
-          🧲
-        </button>
-        <button className={`btn ${keepAspect ? "active" : ""}`} onClick={() => setKeepAspect((v) => !v)} title="Keep ratio">
-          🔒
-        </button>
-        <button className="btn" disabled={!activeId} onClick={rotateActive90} title="Rotate 90°">🔄</button>
-        <button className="btn" disabled={!activeId} onClick={() => setActiveWidthInInches(1)} title="Set width 1 inch">1️⃣</button>
-        <button className="btn" disabled={!activeId} onClick={() => setActiveWidthInInches(2)} title="Set width 2 inch">2️⃣</button>
-        <button className="btn" onClick={exportPNG} title="Export PNG">🌄</button>
-        <button className="btn" onClick={exportPDF} title="Export PDF">📄</button>
-        <button className="btn btn-danger" disabled={!activeId} onClick={removeActive} title="Delete">🗑️</button>
+      <nav className="toolbar modern" aria-label="Editor controls">
+        <div className="toolbar-group">
+          <div className="group-title">Insert</div>
+          <button className="btn btn-primary" onClick={() => inputRef.current?.click()}>Add image</button>
+        </div>
+
+        <div className="toolbar-group">
+          <div className="group-title">Layout</div>
+          <button className={`btn ${grid.enabled ? "active" : ""}`} onClick={() => setGrid((g) => ({ ...g, enabled: !g.enabled }))}>Grid</button>
+          <button className={`btn ${grid.snap ? "active" : ""}`} onClick={() => setGrid((g) => ({ ...g, snap: !g.snap }))}>Snap</button>
+          <button className={`btn ${keepAspect ? "active" : ""}`} onClick={() => setKeepAspect((v) => !v)}>Ratio</button>
+        </div>
+
+        <div className="toolbar-group">
+          <div className="group-title">Image</div>
+          <button className="btn" disabled={!activeId} onClick={rotateActive90}>Rotate 90°</button>
+          <button className="btn" disabled={!activeId} onClick={() => setActiveWidthInInches(1)}>Width 1 in</button>
+          <button className="btn" disabled={!activeId} onClick={() => setActiveWidthInInches(2)}>Width 2 in</button>
+          <button className="btn btn-danger" disabled={!activeId} onClick={removeActive}>🗑️</button>
+        </div>
+
+        <div className="toolbar-group">
+          <div className="group-title">Export</div>
+          <button className="btn" onClick={exportPNG}>PNG</button>
+          <button className="btn" onClick={exportPDF}>PDF</button>
+        </div>
       </nav>
     </main>
   );
