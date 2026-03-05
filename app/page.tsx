@@ -268,17 +268,17 @@ export default function HomePage() {
       />
 
       <nav className="toolbar modern">
-        <button className="btn btn-primary" onClick={() => inputRef.current?.click()}>+ Add</button>
+        <button className="btn btn-primary" onClick={() => inputRef.current?.click()}>✚ Add</button>
         <button className={`btn ${grid.enabled ? "active" : ""}`} onClick={() => setGrid((g) => ({ ...g, enabled: !g.enabled }))}>
-          Grid
+          ◫ Grid
         </button>
         <button className={`btn ${grid.snap ? "active" : ""}`} onClick={() => setGrid((g) => ({ ...g, snap: !g.snap }))}>
-          Snap
+          ⊹ Snap
         </button>
-        <button className="btn" disabled={!activeId} onClick={rotateActive90}>Rotate 90°</button>
-        <button className="btn" onClick={exportPNG}>PNG</button>
-        <button className="btn" onClick={exportPDF}>PDF</button>
-        <button className="btn btn-danger" disabled={!activeId} onClick={removeActive}>Delete</button>
+        <button className="btn" disabled={!activeId} onClick={rotateActive90}>↻ 90°</button>
+        <button className="btn" onClick={exportPNG}>⬇ PNG</button>
+        <button className="btn" onClick={exportPDF}>⬇ PDF</button>
+        <button className="btn btn-danger" disabled={!activeId} onClick={removeActive}>✕ Delete</button>
       </nav>
     </main>
   );

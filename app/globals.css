@@ -59,28 +59,68 @@ html, body {
   position: fixed;
   left: 10px;
   right: 10px;
-  bottom: 10px;
-  display: grid;
-  grid-template-columns: repeat(7, minmax(0, 1fr));
-  gap: 8px;
-  padding: 8px;
-  border-radius: 14px;
-  background: rgba(15, 23, 42, 0.88);
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(148, 163, 184, 0.25);
+  bottom: max(10px, env(safe-area-inset-bottom));
+  display: flex;
+  gap: 10px;
+  padding: 10px;
+  border-radius: 18px;
+  background: linear-gradient(180deg, rgba(15, 23, 42, 0.88), rgba(9, 14, 32, 0.92));
+  backdrop-filter: blur(14px) saturate(1.25);
+  border: 1px solid rgba(148, 163, 184, 0.24);
+  box-shadow:
+    0 14px 36px rgba(2, 6, 23, 0.55),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  overflow-x: auto;
+  scrollbar-width: none;
 }
+.toolbar.modern::-webkit-scrollbar { display: none; }
 
 .btn {
-  border: none;
-  border-radius: 10px;
-  padding: 10px 8px;
-  font-size: 12px;
+  border: 1px solid rgba(148, 163, 184, 0.28);
+  border-radius: 14px;
+  min-width: 86px;
+  padding: 11px 12px;
+  font-size: 13px;
   font-weight: 700;
+  letter-spacing: 0.01em;
   color: #e2e8f0;
-  background: #334155;
+  background: linear-gradient(180deg, #3a4a64, #2a374f);
+  box-shadow:
+    0 6px 16px rgba(2, 6, 23, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  transition: transform 120ms ease, box-shadow 160ms ease, filter 160ms ease, background 200ms ease;
+  white-space: nowrap;
 }
-.btn:active { transform: translateY(1px); }
-.btn.active { background: #1d4ed8; color: #fff; }
-.btn.btn-primary { background: linear-gradient(180deg, #3b82f6, #1d4ed8); }
-.btn.btn-danger { background: #7f1d1d; }
-.btn:disabled { opacity: 0.45; }
+
+.btn:hover {
+  filter: brightness(1.07);
+  box-shadow:
+    0 8px 22px rgba(2, 6, 23, 0.45),
+    inset 0 1px 0 rgba(255, 255, 255, 0.15);
+}
+
+.btn:active {
+  transform: translateY(1px) scale(0.985);
+}
+
+.btn.active {
+  color: #fff;
+  border-color: rgba(96, 165, 250, 0.6);
+  background: linear-gradient(180deg, #2f6df6, #1d4ed8);
+}
+
+.btn.btn-primary {
+  color: #fff;
+  border-color: rgba(96, 165, 250, 0.65);
+  background: linear-gradient(180deg, #4a8dff, #2563eb);
+}
+
+.btn.btn-danger {
+  border-color: rgba(248, 113, 113, 0.45);
+  background: linear-gradient(180deg, #7f1d1d, #5f1118);
+}
+
+.btn:disabled {
+  opacity: 0.45;
+  filter: grayscale(0.25);
+}
