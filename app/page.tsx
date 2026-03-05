@@ -75,10 +75,8 @@ export default function HomePage() {
     for (const file of files) {
       const src = URL.createObjectURL(file);
       const loaded = await createImage(src);
-      const maxWidth = EDITOR_SIZE.width * 0.45;
-      const scale = Math.min(1, maxWidth / loaded.width);
-      const width = loaded.width * scale;
-      const height = loaded.height * scale;
+      const width = loaded.width;
+      const height = loaded.height;
       const item: CanvasItem = {
         id: uuid(),
         src,
