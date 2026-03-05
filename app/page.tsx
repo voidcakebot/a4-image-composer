@@ -37,6 +37,7 @@ export default function HomePage() {
   const [images, setImages] = useState<Record<string, LoadedImage>>({});
   const [grid, setGrid] = useState<GridConfig>(initialGrid);
   const [viewport, setViewport] = useState({ width: 390, height: 700 });
+  const [keepAspect, setKeepAspect] = useState(true);
 
   const stageRef = useRef<Konva.Stage>(null);
   const transformerRef = useRef<Konva.Transformer>(null);
@@ -249,7 +250,7 @@ export default function HomePage() {
                 "bottom-center",
                 "bottom-right",
               ]}
-              keepRatio={false}
+              keepRatio={keepAspect}
               anchorSize={12}
               borderStroke="#2563eb"
               anchorStroke="#2563eb"
@@ -275,6 +276,9 @@ export default function HomePage() {
         </button>
         <button className={`btn ${grid.snap ? "active" : ""}`} onClick={() => setGrid((g) => ({ ...g, snap: !g.snap }))}>
           ⊹ Snap
+        </button>
+        <button className={`btn ${keepAspect ? "active" : ""}`} onClick={() => setKeepAspect((v) => !v)}>
+          ⇱ Ratio
         </button>
         <button className="btn" disabled={!activeId} onClick={rotateActive90}>↻ 90°</button>
         <button className="btn" onClick={exportPNG}>⬇ PNG</button>
