@@ -323,22 +323,22 @@ export default function HomePage() {
       />
 
       <nav className="toolbar modern">
-        <button className="btn btn-primary" onClick={() => inputRef.current?.click()}>✚ Add</button>
-        <button className={`btn ${grid.enabled ? "active" : ""}`} onClick={() => setGrid((g) => ({ ...g, enabled: !g.enabled }))}>
-          ◫ Grid
+        <button className="btn btn-primary" onClick={() => inputRef.current?.click()} title="Add image">🖼️</button>
+        <button className={`btn ${grid.enabled ? "active" : ""}`} onClick={() => setGrid((g) => ({ ...g, enabled: !g.enabled }))} title="Grid">
+          #️⃣
         </button>
-        <button className={`btn ${grid.snap ? "active" : ""}`} onClick={() => setGrid((g) => ({ ...g, snap: !g.snap }))}>
-          ⊹ Snap
+        <button className={`btn ${grid.snap ? "active" : ""}`} onClick={() => setGrid((g) => ({ ...g, snap: !g.snap }))} title="Snap">
+          🧲
         </button>
-        <button className={`btn ${keepAspect ? "active" : ""}`} onClick={() => setKeepAspect((v) => !v)}>
-          ⇱ Ratio
+        <button className={`btn ${keepAspect ? "active" : ""}`} onClick={() => setKeepAspect((v) => !v)} title="Keep ratio">
+          🔒
         </button>
-        <button className="btn" disabled={!activeId} onClick={rotateActive90}>↻ 90°</button>
-        <button className="btn" disabled={!activeId} onClick={() => setActiveWidthInInches(1)}>1 in</button>
-        <button className="btn" disabled={!activeId} onClick={() => setActiveWidthInInches(2)}>2 in</button>
-        <button className="btn" onClick={exportPNG}>⬇ PNG</button>
-        <button className="btn" onClick={exportPDF}>⬇ PDF</button>
-        <button className="btn btn-danger" disabled={!activeId} onClick={removeActive}>✕ Delete</button>
+        <button className="btn" disabled={!activeId} onClick={rotateActive90} title="Rotate 90°">🔄</button>
+        <button className="btn" disabled={!activeId} onClick={() => setActiveWidthInInches(1)} title="Set width 1 inch">1️⃣</button>
+        <button className="btn" disabled={!activeId} onClick={() => setActiveWidthInInches(2)} title="Set width 2 inch">2️⃣</button>
+        <button className="btn" onClick={exportPNG} title="Export PNG">🌄</button>
+        <button className="btn" onClick={exportPDF} title="Export PDF">📄</button>
+        <button className="btn btn-danger" disabled={!activeId} onClick={removeActive} title="Delete">🗑️</button>
       </nav>
     </main>
   );
