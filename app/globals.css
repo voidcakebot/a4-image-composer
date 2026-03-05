@@ -3,53 +3,84 @@ html, body {
   margin: 0;
   padding: 0;
   font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  background: #f3f4f6;
-  color: #111;
+  background:
+    radial-gradient(90vw 40vh at 50% -10%, #1e3a8a22 0%, transparent 70%),
+    #0b1020;
+  color: #e2e8f0;
 }
 
-.app-shell {
+.app-shell.modern {
   min-height: 100dvh;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 10px;
-  padding: 10px 10px 84px;
+  gap: 12px;
+  padding: 12px 12px 96px;
 }
 
-.stage-wrap {
+.topbar {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.chip {
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: rgba(30, 41, 59, 0.65);
+  border: 1px solid rgba(148, 163, 184, 0.22);
+  font-size: 12px;
+  color: #cbd5e1;
+}
+.chip.ok { color: #86efac; border-color: #14532d; }
+
+.stage-wrap.modern {
+  position: relative;
   background: #fff;
-  border-radius: 8px;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+  border-radius: 14px;
+  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.45);
   overflow: hidden;
 }
 
-.toolbar {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
-  gap: 6px;
-  padding: 8px;
-  background: rgba(17, 24, 39, 0.94);
-  backdrop-filter: blur(6px);
+.empty-hint {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #64748b;
+  font-size: 14px;
+  pointer-events: none;
 }
 
-.toolbar button {
+.toolbar.modern {
+  position: fixed;
+  left: 10px;
+  right: 10px;
+  bottom: 10px;
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 8px;
+  padding: 8px;
+  border-radius: 14px;
+  background: rgba(15, 23, 42, 0.88);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(148, 163, 184, 0.25);
+}
+
+.btn {
   border: none;
   border-radius: 10px;
-  background: #ffffff;
-  color: #111;
   padding: 10px 8px;
   font-size: 12px;
-  font-weight: 600;
+  font-weight: 700;
+  color: #e2e8f0;
+  background: #334155;
 }
-
-.toolbar button:active { transform: translateY(1px); }
-
-.meta {
-  font-size: 12px;
-  color: #4b5563;
-}
+.btn:active { transform: translateY(1px); }
+.btn.active { background: #1d4ed8; color: #fff; }
+.btn.btn-primary { background: linear-gradient(180deg, #3b82f6, #1d4ed8); }
+.btn.btn-danger { background: #7f1d1d; }
+.btn:disabled { opacity: 0.45; }

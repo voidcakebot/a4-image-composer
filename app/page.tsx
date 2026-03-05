@@ -16,9 +16,9 @@ const page: PageConfig = {
 };
 
 const initialGrid: GridConfig = {
-  enabled: false,
+  enabled: true,
   sizeMm: DEFAULT_GRID_MM,
-  snap: false,
+  snap: true,
 };
 
 function createImage(src: string): Promise<LoadedImage> {
@@ -51,8 +51,8 @@ export default function HomePage() {
   }, []);
 
   const fitScale = useMemo(() => {
-    const maxW = viewport.width - 20;
-    const maxH = viewport.height - 126;
+    const maxW = viewport.width - 24;
+    const maxH = viewport.height - 200;
     return Math.min(maxW / EDITOR_SIZE.width, maxH / EDITOR_SIZE.height);
   }, [viewport]);
 
@@ -98,6 +98,12 @@ export default function HomePage() {
   const updateItem = useCallback((id: string, patch: Partial<CanvasItem>) => {
     setItems((prev) => prev.map((item) => (item.id === id ? { ...item, ...patch } : item)));
   }, []);
+
+  const removeActive = useCallback(() => {
+    if (!activeId) return;
+    setItems((prev) => prev.filter((item) => item.id !== activeId));
+    setActiveId(null);
+  }, [activeId]);
 
   const exportPngDataUrl = useCallback(() => {
     const stage = stageRef.current;
@@ -146,8 +152,15 @@ export default function HomePage() {
   }, [grid.enabled, gridPx]);
 
   return (
-    <main className="app-shell">
-      <section className="stage-wrap" style={{ width: stageSize.width, height: stageSize.height }}>
+    <main className="app-shell modern">
+      <header className="topbar">
+        <div className="chip">{page.format} {page.orientation}</div>
+        <div className="chip">{items.length} item{items.length === 1 ? "" : "s"}</div>
+        <div className={`chip ${grid.enabled ? "ok" : ""}`}>Grid {grid.enabled ? "on" : "off"}</div>
+      </header>
+
+      <section className="stage-wrap modern" style={{ width: stageSize.width, height: stageSize.height }}>
+        {items.length === 0 && <div className="empty-hint">Add an image to start composing</div>}
         <Stage
           width={stageSize.width}
           height={stageSize.height}
@@ -164,9 +177,9 @@ export default function HomePage() {
           <Layer>
             <Rect x={0} y={0} width={EDITOR_SIZE.width} height={EDITOR_SIZE.height} fill="#fff" />
             {gridLines.map((line) => (
-              <Line key={line.key} points={line.points} stroke="#e8e8e8" strokeWidth={1} />
+              <Line key={line.key} points={line.points} stroke="#eef2f7" strokeWidth={1} />
             ))}
-            {items.map((item, idx) => (
+            {items.map((item) => (
               <KonvaImage
                 key={item.id}
                 ref={(node) => {
@@ -208,9 +221,8 @@ export default function HomePage() {
                     rotation: node.rotation(),
                   });
                 }}
-                stroke={activeId === item.id ? "#0099ff" : undefined}
+                stroke={activeId === item.id ? "#2563eb" : undefined}
                 strokeWidth={activeId === item.id ? 2 : 0}
-                shadowEnabled={idx === items.length - 1}
               />
             ))}
             <Transformer
@@ -228,8 +240,8 @@ export default function HomePage() {
               ]}
               keepRatio={false}
               anchorSize={12}
-              borderStroke="#0099ff"
-              anchorStroke="#0099ff"
+              borderStroke="#2563eb"
+              anchorStroke="#2563eb"
               anchorFill="#ffffff"
             />
           </Layer>
@@ -245,17 +257,18 @@ export default function HomePage() {
         style={{ display: "none" }}
       />
 
-      <nav className="toolbar">
-        <button onClick={() => inputRef.current?.click()}>+ Bild hinzufügen</button>
-        <button onClick={() => setGrid((g) => ({ ...g, enabled: !g.enabled }))}>
-          Raster {grid.enabled ? "an" : "aus"}
+      <nav className="toolbar modern">
+        <button className="btn btn-primary" onClick={() => inputRef.current?.click()}>+ Add</button>
+        <button className={`btn ${grid.enabled ? "active" : ""}`} onClick={() => setGrid((g) => ({ ...g, enabled: !g.enabled }))}>
+          Grid
         </button>
-        <button onClick={() => setGrid((g) => ({ ...g, snap: !g.snap }))}>Snap {grid.snap ? "an" : "aus"}</button>
-        <button onClick={exportPNG}>Export PNG</button>
-        <button onClick={exportPDF}>Export PDF</button>
+        <button className={`btn ${grid.snap ? "active" : ""}`} onClick={() => setGrid((g) => ({ ...g, snap: !g.snap }))}>
+          Snap
+        </button>
+        <button className="btn" onClick={exportPNG}>PNG</button>
+        <button className="btn" onClick={exportPDF}>PDF</button>
+        <button className="btn btn-danger" disabled={!activeId} onClick={removeActive}>Delete</button>
       </nav>
-
-      <div className="meta">{page.format} {page.orientation} · Grid {grid.sizeMm}mm</div>
     </main>
   );
 }
