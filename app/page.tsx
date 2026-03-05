@@ -118,7 +118,8 @@ export default function HomePage() {
     const tr = transformerRef.current;
     tr?.visible(false);
     stage.batchDraw();
-    const data = stage.toDataURL({ pixelRatio: exportPixelRatio() });
+    // Force higher render resolution to reduce visible pixelation in final export.
+    const data = stage.toDataURL({ pixelRatio: Math.max(exportPixelRatio(), 4) });
     tr?.visible(true);
     stage.batchDraw();
     return data;
@@ -141,8 +142,8 @@ export default function HomePage() {
   const exportPDF = useCallback(() => {
     const data = exportPngDataUrl();
     if (!data) return;
-    const pdf = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4", compress: true });
-    pdf.addImage(data, "PNG", 0, 0, A4_MM.width, A4_MM.height, undefined, "FAST");
+    const pdf = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4", compress: false });
+    pdf.addImage(data, "PNG", 0, 0, A4_MM.width, A4_MM.height, undefined, "NONE");
     const blob = pdf.output("blob");
     const url = URL.createObjectURL(blob);
     downloadDataUrl(url, "a4-composition.pdf");
