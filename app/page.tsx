@@ -105,6 +105,15 @@ export default function HomePage() {
     setActiveId(null);
   }, [activeId]);
 
+  const rotateActive90 = useCallback(() => {
+    if (!activeId) return;
+    setItems((prev) =>
+      prev.map((item) =>
+        item.id === activeId ? { ...item, rotation: (item.rotation + 90) % 360 } : item,
+      ),
+    );
+  }, [activeId]);
+
   const exportPngDataUrl = useCallback(() => {
     const stage = stageRef.current;
     if (!stage) return null;
@@ -136,8 +145,11 @@ export default function HomePage() {
     if (!data) return;
     const pdf = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4", compress: true });
     pdf.addImage(data, "PNG", 0, 0, A4_MM.width, A4_MM.height, undefined, "FAST");
-    pdf.save("a4-composition.pdf");
-  }, [exportPngDataUrl]);
+    const blob = pdf.output("blob");
+    const url = URL.createObjectURL(blob);
+    downloadDataUrl(url, "a4-composition.pdf");
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  }, [downloadDataUrl, exportPngDataUrl]);
 
   const gridLines = useMemo(() => {
     if (!grid.enabled) return [];
@@ -265,6 +277,7 @@ export default function HomePage() {
         <button className={`btn ${grid.snap ? "active" : ""}`} onClick={() => setGrid((g) => ({ ...g, snap: !g.snap }))}>
           Snap
         </button>
+        <button className="btn" disabled={!activeId} onClick={rotateActive90}>Rotate 90°</button>
         <button className="btn" onClick={exportPNG}>PNG</button>
         <button className="btn" onClick={exportPDF}>PDF</button>
         <button className="btn btn-danger" disabled={!activeId} onClick={removeActive}>Delete</button>
