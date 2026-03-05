@@ -38,6 +38,7 @@ export default function HomePage() {
   const [grid, setGrid] = useState<GridConfig>(initialGrid);
   const [viewport, setViewport] = useState({ width: 390, height: 700 });
   const [keepAspect, setKeepAspect] = useState(true);
+  const [openGroup, setOpenGroup] = useState<"layout" | "image" | "export" | null>(null);
 
   const stageRef = useRef<Konva.Stage>(null);
   const transformerRef = useRef<Konva.Transformer>(null);
@@ -321,30 +322,39 @@ export default function HomePage() {
       />
 
       <nav className="toolbar modern" aria-label="Editor controls">
-        <div className="toolbar-group">
-          <div className="group-title">Insert</div>
-          <button className="btn btn-primary" onClick={() => inputRef.current?.click()}>Add image</button>
+        <button className="btn btn-primary btn-add" onClick={() => inputRef.current?.click()}>Add image</button>
+
+        <div className="toolbar-group collapsible">
+          <button className={`group-toggle ${openGroup === "layout" ? "open" : ""}`} onClick={() => setOpenGroup((g) => (g === "layout" ? null : "layout"))}>Layout</button>
+          {openGroup === "layout" && (
+            <div className="group-content">
+              <button className={`btn ${grid.enabled ? "active" : ""}`} onClick={() => setGrid((g) => ({ ...g, enabled: !g.enabled }))}>Grid</button>
+              <button className={`btn ${grid.snap ? "active" : ""}`} onClick={() => setGrid((g) => ({ ...g, snap: !g.snap }))}>Snap</button>
+              <button className={`btn ${keepAspect ? "active" : ""}`} onClick={() => setKeepAspect((v) => !v)}>Ratio</button>
+            </div>
+          )}
         </div>
 
-        <div className="toolbar-group">
-          <div className="group-title">Layout</div>
-          <button className={`btn ${grid.enabled ? "active" : ""}`} onClick={() => setGrid((g) => ({ ...g, enabled: !g.enabled }))}>Grid</button>
-          <button className={`btn ${grid.snap ? "active" : ""}`} onClick={() => setGrid((g) => ({ ...g, snap: !g.snap }))}>Snap</button>
-          <button className={`btn ${keepAspect ? "active" : ""}`} onClick={() => setKeepAspect((v) => !v)}>Ratio</button>
+        <div className="toolbar-group collapsible">
+          <button className={`group-toggle ${openGroup === "image" ? "open" : ""}`} onClick={() => setOpenGroup((g) => (g === "image" ? null : "image"))}>Image</button>
+          {openGroup === "image" && (
+            <div className="group-content">
+              <button className="btn" disabled={!activeId} onClick={rotateActive90}>Rotate 90°</button>
+              <button className="btn" disabled={!activeId} onClick={() => setActiveWidthInInches(1)}>Width 1 in</button>
+              <button className="btn" disabled={!activeId} onClick={() => setActiveWidthInInches(2)}>Width 2 in</button>
+              <button className="btn btn-danger" disabled={!activeId} onClick={removeActive}>🗑️</button>
+            </div>
+          )}
         </div>
 
-        <div className="toolbar-group">
-          <div className="group-title">Image</div>
-          <button className="btn" disabled={!activeId} onClick={rotateActive90}>Rotate 90°</button>
-          <button className="btn" disabled={!activeId} onClick={() => setActiveWidthInInches(1)}>Width 1 in</button>
-          <button className="btn" disabled={!activeId} onClick={() => setActiveWidthInInches(2)}>Width 2 in</button>
-          <button className="btn btn-danger" disabled={!activeId} onClick={removeActive}>🗑️</button>
-        </div>
-
-        <div className="toolbar-group">
-          <div className="group-title">Export</div>
-          <button className="btn" onClick={exportPNG}>PNG</button>
-          <button className="btn" onClick={exportPDF}>PDF</button>
+        <div className="toolbar-group collapsible">
+          <button className={`group-toggle ${openGroup === "export" ? "open" : ""}`} onClick={() => setOpenGroup((g) => (g === "export" ? null : "export"))}>Export</button>
+          {openGroup === "export" && (
+            <div className="group-content">
+              <button className="btn" onClick={exportPNG}>PNG</button>
+              <button className="btn" onClick={exportPDF}>PDF</button>
+            </div>
+          )}
         </div>
       </nav>
     </main>
