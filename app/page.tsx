@@ -187,18 +187,20 @@ export default function HomePage() {
     a.remove();
   }, []);
 
+  const randomSuffix = useCallback(() => Math.random().toString(36).slice(2, 8), []);
+
   const exportPNG = useCallback(() => {
     const data = exportPngDataUrl();
-    if (data) downloadDataUrl(data, "a4-composition.png");
-  }, [downloadDataUrl, exportPngDataUrl]);
+    if (data) downloadDataUrl(data, `a4-composition-${randomSuffix()}.png`);
+  }, [downloadDataUrl, exportPngDataUrl, randomSuffix]);
 
   const exportPDF = useCallback(() => {
     const data = exportPngDataUrl();
     if (!data) return;
     const pdf = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4", compress: false });
     pdf.addImage(data, "PNG", 0, 0, A4_MM.width, A4_MM.height, undefined, "NONE");
-    pdf.save("a4-composition.pdf");
-  }, [exportPngDataUrl]);
+    pdf.save(`a4-composition-${randomSuffix()}.pdf`);
+  }, [exportPngDataUrl, randomSuffix]);
 
   const gridLines = useMemo(() => {
     if (!grid.enabled) return [];
