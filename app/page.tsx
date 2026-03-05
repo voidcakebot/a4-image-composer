@@ -109,18 +109,23 @@ export default function HomePage() {
     setItems((prev) =>
       prev.map((item) => {
         if (item.id !== activeId) return item;
-        const delta = Math.PI / 2;
-        const cx = item.x + item.width / 2;
-        const cy = item.y + item.height / 2;
-        const vx = -item.width / 2;
-        const vy = -item.height / 2;
-        const rvx = vx * Math.cos(delta) - vy * Math.sin(delta);
-        const rvy = vx * Math.sin(delta) + vy * Math.cos(delta);
+
+        const theta = (item.rotation * Math.PI) / 180;
+        const nextRotation = (item.rotation + 90) % 360;
+        const thetaNext = (nextRotation * Math.PI) / 180;
+
+        // Keep visual center stable even after repeated rotations.
+        const cx = item.x + (item.width / 2) * Math.cos(theta) - (item.height / 2) * Math.sin(theta);
+        const cy = item.y + (item.width / 2) * Math.sin(theta) + (item.height / 2) * Math.cos(theta);
+
+        const nextX = cx - (item.width / 2) * Math.cos(thetaNext) + (item.height / 2) * Math.sin(thetaNext);
+        const nextY = cy - (item.width / 2) * Math.sin(thetaNext) - (item.height / 2) * Math.cos(thetaNext);
+
         return {
           ...item,
-          x: cx + rvx,
-          y: cy + rvy,
-          rotation: (item.rotation + 90) % 360,
+          x: nextX,
+          y: nextY,
+          rotation: nextRotation,
         };
       }),
     );
