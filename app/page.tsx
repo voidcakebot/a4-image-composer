@@ -164,9 +164,10 @@ export default function HomePage() {
     const pdf = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4", compress: false });
     pdf.addImage(data, "PNG", 0, 0, A4_MM.width, A4_MM.height, undefined, "NONE");
     const blob = pdf.output("blob");
-    const url = URL.createObjectURL(blob);
+    const pdfFile = new File([blob], "a4-composition.pdf", { type: "application/pdf" });
+    const url = URL.createObjectURL(pdfFile);
     downloadDataUrl(url, "a4-composition.pdf");
-    setTimeout(() => URL.revokeObjectURL(url), 1000);
+    setTimeout(() => URL.revokeObjectURL(url), 1500);
   }, [downloadDataUrl, exportPngDataUrl]);
 
   const gridLines = useMemo(() => {
