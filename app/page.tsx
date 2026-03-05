@@ -18,7 +18,7 @@ const page: PageConfig = {
 const initialGrid: GridConfig = {
   enabled: true,
   sizeMm: DEFAULT_GRID_MM,
-  snap: true,
+  snap: false,
 };
 
 function createImage(src: string): Promise<LoadedImage> {
