@@ -4,7 +4,7 @@ import { jsPDF } from "jspdf";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Layer, Line, Rect, Stage, Transformer, Image as KonvaImage } from "react-konva";
 import { v4 as uuid } from "uuid";
-import { A4_MM, DEFAULT_GRID_MM, EDITOR_SIZE, exportPixelRatio, mmToPx, snapToGrid } from "@/lib/a4";
+import { A4_MM, DEFAULT_GRID_MM, mmToPx, snapToGrid } from "@/lib/a4";
 import type { CanvasItem, GridConfig, PageConfig } from "@/lib/types";
 import Konva from "konva";
 
@@ -14,6 +14,12 @@ const page: PageConfig = {
   format: "A4",
   orientation: "portrait",
 };
+
+const EXPORT_DPI = 300;
+const EDITOR_SIZE = {
+  width: 1240,
+  height: Math.round((1240 * A4_MM.height) / A4_MM.width),
+} as const;
 
 const initialGrid: GridConfig = {
   enabled: true,
@@ -166,18 +172,36 @@ export default function HomePage() {
     );
   }, [activeId]);
 
-  const exportPngDataUrl = useCallback(() => {
-    const stage = stageRef.current;
-    if (!stage) return null;
-    const tr = transformerRef.current;
-    tr?.visible(false);
-    stage.batchDraw();
-    // Force higher render resolution to reduce visible pixelation in final export.
-    const data = stage.toDataURL({ pixelRatio: Math.max(exportPixelRatio(), 4) });
-    tr?.visible(true);
-    stage.batchDraw();
-    return data;
-  }, []);
+  const renderExportCanvas = useCallback(() => {
+    const targetWidthPx = Math.round((A4_MM.width / 25.4) * EXPORT_DPI);
+    const targetHeightPx = Math.round((A4_MM.height / 25.4) * EXPORT_DPI);
+    const ratio = targetWidthPx / EDITOR_SIZE.width;
+
+    const canvas = document.createElement("canvas");
+    canvas.width = targetWidthPx;
+    canvas.height = targetHeightPx;
+
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return null;
+
+    ctx.fillStyle = "#ffffff";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = "high";
+
+    for (const item of items) {
+      const img = images[item.id];
+      if (!img) continue;
+
+      ctx.save();
+      ctx.translate(item.x * ratio, item.y * ratio);
+      ctx.rotate((item.rotation * Math.PI) / 180);
+      ctx.drawImage(img, 0, 0, item.width * ratio, item.height * ratio);
+      ctx.restore();
+    }
+
+    return canvas;
+  }, [images, items]);
 
   const downloadDataUrl = useCallback((dataUrl: string, fileName: string) => {
     const a = document.createElement("a");
@@ -191,17 +215,20 @@ export default function HomePage() {
   const randomSuffix = useCallback(() => Math.random().toString(36).slice(2, 8), []);
 
   const exportPNG = useCallback(() => {
-    const data = exportPngDataUrl();
-    if (data) downloadDataUrl(data, `a4-composition-${randomSuffix()}.png`);
-  }, [downloadDataUrl, exportPngDataUrl, randomSuffix]);
+    const canvas = renderExportCanvas();
+    if (!canvas) return;
+    const data = canvas.toDataURL("image/png");
+    downloadDataUrl(data, `a4-composition-${randomSuffix()}.png`);
+  }, [downloadDataUrl, randomSuffix, renderExportCanvas]);
 
   const exportPDF = useCallback(() => {
-    const data = exportPngDataUrl();
-    if (!data) return;
+    const canvas = renderExportCanvas();
+    if (!canvas) return;
+    const data = canvas.toDataURL("image/png");
     const pdf = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4", compress: false });
     pdf.addImage(data, "PNG", 0, 0, A4_MM.width, A4_MM.height, undefined, "NONE");
     pdf.save(`a4-composition-${randomSuffix()}.pdf`);
-  }, [exportPngDataUrl, randomSuffix]);
+  }, [randomSuffix, renderExportCanvas]);
 
   const gridLines = useMemo(() => {
     if (!grid.enabled) return [];
